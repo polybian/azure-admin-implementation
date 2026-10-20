@@ -1,0 +1,13 @@
+UserPrincipalName,DisplayName,Department,MfaState,RegisteredAuthMethods,IsPrivilegedAdmin,DaysSinceLastSignIn
+ava.nguyen@contoso.example,Ava Nguyen,IT,MfaRegistered,microsoftAuthenticator;phone,True,1
+liam.chen@contoso.example,Liam Chen,Finance,MfaRegistered,phone,False,2
+sophia.reyes@contoso.example,Sophia Reyes,HR,NotRegistered,,False,5
+noah.kim@contoso.example,Noah Kim,IT,MfaRegistered,microsoftAuthenticator;fido2,True,0
+emma.silva@contoso.example,Emma Silva,Sales,NotRegistered,,False,12
+olivia.patel@contoso.example,Olivia Patel,IT,MfaRegistered,email;phone,False,3
+ethan.garcia@contoso.example,Ethan Garcia,Operations,NotRegistered,,True,30
+mia.johnson@contoso.example,Mia Johnson,Finance,MfaRegistered,microsoftAuthenticator,False,1
+lucas.wong@contoso.example,Lucas Wong,IT,MfaRegistered,phone;email,False,4
+amelia.davis@contoso.example,Amelia Davis,HR,NotRegistered,,False,45
+james.miller@contoso.example,James Miller,Sales,MfaRegistered,temporaryAccessPass,False,0
+harper.taylor@contoso.example,Harper Taylor,Operations,MfaRegistered,microsoftAuthenticator;phone;email,False,2

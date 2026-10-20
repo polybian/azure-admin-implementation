@@ -1,0 +1,22 @@
+# --- Real identity data: NEVER commit ---
+# Real user exports (the CSVs you feed Get-MfaCoverageReport.ps1 against a
+# live tenant export) contain PII. Only the fictional *.csv.example files
+# ship with this repo.
+*.csv
+!*.csv.example
+
+# --- Reports generated from real data ---
+*.log
+*-report.json
+mfa-report*.json
+keyvault-inventory*.csv
+
+# --- Python / editor noise (for any helper tooling) ---
+__pycache__/
+*.py[cod]
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+*~
+.vscode/
