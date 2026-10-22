@@ -46,7 +46,6 @@ sandbox.
 | `docs/identity-governance.md` | CA framework explainer + 3 template JSON policies (MFA for admins, block legacy auth, managed-device requirement) |
 | `docs/pim-keyvault.md` | PIM runbook: eligible vs. active, approval workflow, access-review cadence; Key Vault secret-rotation procedure |
 | `docs/architecture.md` | Design decisions: why CA-first, defense-in-depth identity, least privilege, CSV-first reporting |
-| `docs/interview-answers.md` | "How did you design this?" — talking points for interviews |
 | `scripts/Get-MfaCoverageReport.ps1` | Read-only MFA coverage report from an exported CSV (never touches a live tenant) |
 | `scripts/users.csv.example` | Fictional `contoso.example` user data for the report script |
 | `scripts/Export-KeyVaultInventory.ps1` | Guarded template skeleton for a Key Vault secret inventory (exits by design until configured) |
