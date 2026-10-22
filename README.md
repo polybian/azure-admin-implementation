@@ -96,7 +96,7 @@ exactly what was run and what was not.
 - **Real exports stay out of git.** `.gitignore` blocks `*.csv` (except the
   fictional `*.csv.example`) because real user exports are PII.
 
-## Validation (actually run locally)
+## Validation
 
 PowerShell 7 parser — 0 syntax errors on both scripts:
 
@@ -176,9 +176,9 @@ and long base64-ish tokens: **clean**. The only GUIDs present are the five
 documented public Entra role template IDs (Global Admin, Privileged Auth
 Admin, Auth Admin, User Admin, CA Admin). No tenant IDs, no secrets, no keys.
 
-**Honest statement:** nothing in this implementation was deployed to a real tenant, and
-nothing here can deploy itself. The policies are templates, the procedures
+**Scope:** nothing in this repo has been deployed to a real tenant, and
+nothing here deploys itself. The policies are templates, the procedures
 are runbooks, and the scripts process local CSV data only. Turning any of
-this into production requires the user's own Azure/Entra tenant, the
+this into production requires your own Azure/Entra tenant, the
 report-only rollout order documented in `docs/identity-governance.md`, and a
 human approving every step.
