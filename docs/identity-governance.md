@@ -1,7 +1,7 @@
-# Identity Governance — Conditional Access Policy Design (LAB)
+# Identity Governance — Conditional Access Policy Design
 
 **Scope:** template policy design for a Microsoft Entra ID (Azure AD) tenant.
-**Status:** LAB — nothing here is deployed. The JSON below is a *design
+**Status:** Sandboxed — nothing here is deployed. The JSON below is a *design
 template* in Microsoft Graph `conditionalAccessPolicy` schema, ready to be
 reviewed and applied in **your own tenant's test environment** only.
 State is `disabled` in every template so a copy-paste can never go live by
@@ -76,13 +76,13 @@ the policy survives role renames:
 - User Administrator — `fe930be7-5e62-47db-91af-98c3a49a38b11`
 - Conditional Access Administrator — `b1be1c3e-b65d-4f19-8427-f6fa0d97feb9`
 
-> **LAB TEMPLATE** — `state: disabled`, placeholders must be replaced.
+> **TEMPLATE** — `state: disabled`, placeholders must be replaced.
 
 ```json
 {
   "displayName": "TEMPLATE — Require MFA for all administrators",
   "state": "disabled",
-  "description": "LAB TEMPLATE: require MFA on every sign-in by privileged admin role holders. Replace REPLACE_ME exclusions, test in report-only mode, then enable.",
+  "description": "TEMPLATE: require MFA on every sign-in by privileged admin role holders. Replace REPLACE_ME exclusions, test in report-only mode, then enable.",
   "conditions": {
     "users": {
       "includeRoles": [
@@ -136,13 +136,13 @@ are the hole in every MFA policy. Block them tenant-wide. In Graph, legacy
 auth is selected with `clientAppTypes: ["exchangeActiveSync", "other"]` —
 `other` covers IMAP, POP3, SMTP with basic auth and old Office clients.
 
-> **LAB TEMPLATE** — `state: disabled`, placeholders must be replaced.
+> **TEMPLATE** — `state: disabled`, placeholders must be replaced.
 
 ```json
 {
   "displayName": "TEMPLATE — Block legacy authentication",
   "state": "disabled",
-  "description": "LAB TEMPLATE: block all legacy/basic authentication (IMAP, POP, SMTP basic, old EAS). Replace REPLACE_ME exclusions, verify service accounts migrated, then enable.",
+  "description": "TEMPLATE: block all legacy/basic authentication (IMAP, POP, SMTP basic, old EAS). Replace REPLACE_ME exclusions, verify service accounts migrated, then enable.",
   "conditions": {
     "users": {
       "includeUsers": ["All"],
@@ -197,13 +197,13 @@ compliant (`device.isCompliant -eq True`) or Hybrid Azure AD joined
 (`device.trustType -eq "ServerAD"`). This implements device-based least
 privilege: managed device = known-good endpoint.
 
-> **LAB TEMPLATE** — `state: disabled`, placeholders must be replaced.
+> **TEMPLATE** — `state: disabled`, placeholders must be replaced.
 
 ```json
 {
   "displayName": "TEMPLATE — Require managed device for corporate apps",
   "state": "disabled",
-  "description": "LAB TEMPLATE: require compliant OR hybrid-joined device for corporate apps. Replace REPLACE_ME app IDs/group, test in report-only mode, then enable.",
+  "description": "TEMPLATE: require compliant OR hybrid-joined device for corporate apps. Replace REPLACE_ME app IDs/group, test in report-only mode, then enable.",
   "conditions": {
     "users": {
       "includeUsers": ["All"],

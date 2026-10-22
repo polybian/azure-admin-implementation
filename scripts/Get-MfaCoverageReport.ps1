@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-    Read-only MFA coverage report from exported user data (LAB).
+    Read-only MFA coverage report from exported user data (sandboxed).
 
 .DESCRIPTION
     Parses a CSV of user identity data and reports MFA coverage: who lacks
@@ -91,7 +91,7 @@ $summary = [ordered]@{
 }
 
 Write-Output ''
-Write-Output '=== MFA Coverage Report (LAB — CSV data, no live tenant) ==='
+Write-Output '=== MFA Coverage Report (CSV data, no live tenant) ==='
 Write-Output ("Source file : {0}" -f $summary.SourceFile)
 Write-Output ("Generated   : {0:u} UTC" -f (Get-Date).ToUniversalTime())
 Write-Output ''

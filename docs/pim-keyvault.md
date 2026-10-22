@@ -1,4 +1,4 @@
-# Privileged Identity Management (PIM) + Key Vault — Runbook (LAB)
+# Privileged Identity Management (PIM) + Key Vault — Runbook
 
 Procedural runbook for administering privileged access in Microsoft Entra ID
 and for rotating secrets in Azure Key Vault. Templates and procedures only —

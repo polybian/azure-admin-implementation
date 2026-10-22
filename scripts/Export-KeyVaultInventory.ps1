@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-    Key Vault secret-inventory template (LAB — does NOT execute).
+    Key Vault secret-inventory template (does NOT execute).
 
 .DESCRIPTION
     This is a TEMPLATE / commented skeleton showing how a Key Vault secret

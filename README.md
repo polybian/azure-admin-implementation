@@ -1,12 +1,12 @@
-# Azure Admin Lab — Entra ID Identity Governance (LAB)
+# Azure Admin Implementation — Entra ID Identity Governance
 
-An identity-administration lab focused on the **governance** side of
+An identity-administration implementation focused on the **governance** side of
 Microsoft Entra ID (Azure AD): Conditional Access policy design, Privileged
 Identity Management procedures, Key Vault secret rotation, and MFA coverage
 reporting. The companion `azure-hybrid-network` project covers the
 networking side; this one covers who gets in, with what, and who approved it.
 
-> **LAB — nothing here touches a real directory.** Every policy is a
+> **Sandboxed implementation — nothing here touches a real directory.** Every policy is a
 > `disabled` template with `REPLACE_ME` placeholders, every procedure is a
 > runbook on paper, and the reporting script reads a fictional CSV — it
 > never calls Microsoft Graph or any network endpoint. Deployment needs
@@ -21,7 +21,7 @@ coverage from exported data — with honest validation, all run in this
 sandbox.
 
 ```
-   identity governance (this lab)          networking (companion lab)
+   identity governance (this implementation)   networking (companion implementation)
    ┌──────────────────────────────┐       ┌───────────────────────────┐
    │  docs/identity-governance.md │       │   azure-hybrid-network    │
    │  CA policies A/B/C (TEMPLATE │       │   VNets, subnets, NSGs,   │
@@ -118,7 +118,7 @@ Real run of the report script against the fictional `users.csv.example`
 (12 users — all data fictional, nothing redacted because nothing is real):
 
 ```
-=== MFA Coverage Report (LAB — CSV data, no live tenant) ===
+=== MFA Coverage Report (CSV data, no live tenant) ===
 Source file : users.csv.example
 Generated   : 2026-10-20 20:56:04Z UTC
 
@@ -155,7 +155,7 @@ The template guard works as designed — the inventory script refuses to run
 until configured:
 
 ```
-$ ./scripts/Export-KeyVaultInventory.ps1 -VaultName 'kv-lab-test-01'
+$ ./scripts/Export-KeyVaultInventory.ps1 -VaultName 'kv-impl-test-01'
 WARNING: TEMPLATE ONLY: Export-KeyVaultInventory.ps1 does not run against a real vault.
 ...
 Nothing was queried, listed, or exported. No vault was touched.
@@ -166,7 +166,7 @@ and long base64-ish tokens: **clean**. The only GUIDs present are the five
 documented public Entra role template IDs (Global Admin, Privileged Auth
 Admin, Auth Admin, User Admin, CA Admin). No tenant IDs, no secrets, no keys.
 
-**Honest statement:** nothing in this lab was deployed to a real tenant, and
+**Honest statement:** nothing in this implementation was deployed to a real tenant, and
 nothing here can deploy itself. The policies are templates, the procedures
 are runbooks, and the scripts process local CSV data only. Turning any of
 this into production requires the user's own Azure/Entra tenant, the
