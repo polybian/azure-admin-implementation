@@ -1,24 +1,35 @@
 # Azure Admin Implementation — Entra ID Identity Governance
 
-An identity-administration implementation focused on the **governance** side of
-Microsoft Entra ID (Azure AD): Conditional Access policy design, Privileged
-Identity Management procedures, Key Vault secret rotation, and MFA coverage
-reporting. The companion `azure-hybrid-network` project covers the
-networking side; this one covers who gets in, with what, and who approved it.
+Identity-governance **design + documentation + one working sample-data
+analyzer** for Microsoft Entra ID (Azure AD). Be precise about what each
+piece is — nothing here was deployed to a real tenant and nothing here can
+deploy itself:
 
-> **Sandboxed implementation — nothing here touches a real directory.** Every policy is a
+| Piece | Status |
+|---|---|
+| Conditional Access policies (`docs/identity-governance.md`) | **Design docs** — 3 template JSON policies (`disabled`, `REPLACE_ME` placeholders). Authored as reviewable Graph-schema JSON; never deployed. |
+| PIM + Key Vault rotation (`docs/pim-keyvault.md`) | **Runbook on paper** — eligible vs. active assignments, approval workflows, access-review cadence, secret-rotation procedure. |
+| `scripts/Export-KeyVaultInventory.ps1` | **Guarded template — does not execute.** Prints setup instructions and exits by design; the real vault calls are commented TODOs. It has never queried a vault. |
+| `scripts/Get-MfaCoverageReport.ps1` | **Working analyzer** — actually runs, but only against exported CSV data (fictional `users.csv.example` ships with the repo). Never calls Graph or any network endpoint. |
+
+The companion `azure-hybrid-network` project covers the networking side;
+this one covers who gets in, with what, and who approved it — mostly on
+paper, with one real reporting tool.
+
+> **Offline implementation — nothing here touches a real directory.** Every policy is a
 > `disabled` template with `REPLACE_ME` placeholders, every procedure is a
 > runbook on paper, and the reporting script reads a fictional CSV — it
 > never calls Microsoft Graph or any network endpoint. Deployment needs
 > your own Azure/Entra tenant.
 
-**What this demonstrates:** Conditional Access policy design (MFA for
-admins, legacy-auth blocking, device trust) authored as reviewable JSON in
-Graph schema; PIM concepts (eligible vs. active assignments, approval
-workflows, access-review cadence); a Key Vault rotation procedure with an
-audit trail; and a read-only PowerShell reporting tool that computes MFA
-coverage from exported data — with honest validation, all run in this
-sandbox.
+**What this demonstrates:** Conditional Access *policy design* (MFA for
+admins, legacy-auth blocking, device trust) as reviewable JSON — templates,
+not deployments; PIM *concepts* (eligible vs. active assignments, approval
+workflows, access-review cadence) as a runbook; a Key Vault rotation
+*procedure* whose inventory script is a guarded non-executing template; and
+one genuinely working tool — a read-only PowerShell analyzer that computes
+MFA coverage from exported CSV data. The validation section below covers
+exactly what was run and what was not.
 
 ```
    identity governance (this implementation)   networking (companion implementation)
@@ -85,7 +96,7 @@ sandbox.
 - **Real exports stay out of git.** `.gitignore` blocks `*.csv` (except the
   fictional `*.csv.example`) because real user exports are PII.
 
-## Validation (actually run in this sandbox)
+## Validation (actually run locally)
 
 PowerShell 7 parser — 0 syntax errors on both scripts:
 

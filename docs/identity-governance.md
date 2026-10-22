@@ -1,7 +1,7 @@
 # Identity Governance — Conditional Access Policy Design
 
 **Scope:** template policy design for a Microsoft Entra ID (Azure AD) tenant.
-**Status:** Sandboxed — nothing here is deployed. The JSON below is a *design
+**Status:** Offline design — nothing here is deployed. The JSON below is a *design
 template* in Microsoft Graph `conditionalAccessPolicy` schema, ready to be
 reviewed and applied in **your own tenant's test environment** only.
 State is `disabled` in every template so a copy-paste can never go live by

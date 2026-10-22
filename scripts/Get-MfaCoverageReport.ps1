@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-    Read-only MFA coverage report from exported user data (sandboxed).
+    Read-only MFA coverage report from exported user data (offline).
 
 .DESCRIPTION
     Parses a CSV of user identity data and reports MFA coverage: who lacks
