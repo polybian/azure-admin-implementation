@@ -39,7 +39,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 # ---------------------------------------------------------------------------
-# TEMPLATE GUARD — nothing below this line executes until the guard is
+# TEMPLATE GUARD - nothing below this line executes until the guard is
 # deliberately removed by the admin running it against their own vault.
 # ---------------------------------------------------------------------------
 Write-Warning @'
@@ -48,7 +48,7 @@ TEMPLATE ONLY: Export-KeyVaultInventory.ps1 does not run against a real vault.
 To use it:
   1. Fill in every TODO below (vault name, subscription context, output path).
   2. Install-Module Az -Scope CurrentUser
-  3. Connect-AzAccount  (your own tenant — interactive sign-in)
+  3. Connect-AzAccount  (your own tenant - interactive sign-in)
   4. Remove this guard block, save as a new file, and run the copy.
 
 Nothing was queried, listed, or exported. No vault was touched.
@@ -71,11 +71,11 @@ return
 #     throw 'Az.KeyVault module not found. Run: Install-Module Az -Scope CurrentUser'
 # }
 
-# Step 1 — list secrets (metadata only; values are never retrieved here).
-# TODO: real call — Get-AzKeyVaultSecret -VaultName $VaultName
+# Step 1 - list secrets (metadata only; values are never retrieved here).
+# TODO: real call - Get-AzKeyVaultSecret -VaultName $VaultName
 # $secrets = Get-AzKeyVaultSecret -VaultName $VaultName
 
-# Step 2 — per secret, pull version + expiry attributes.
+# Step 2 - per secret, pull version + expiry attributes.
 # TODO: real calls inside the loop:
 #   $versions = Get-AzKeyVaultSecret -VaultName $VaultName -Name $secret.Name -IncludeVersions
 #   foreach ($version in $versions) {
@@ -85,7 +85,7 @@ return
 #       # values must not land in CSV files, logs, or tickets.
 #   }
 
-# Step 3 — flag what the rotation procedure (docs/pim-keyvault.md) needs:
+# Step 3 - flag what the rotation procedure (docs/pim-keyvault.md) needs:
 #   - expires within 30 days  -> 'rotate-now'
 #   - expires within 60 days  -> 'rotate-soon'
 #   - no expiry set           -> 'no-expiry-policy' (findings, not data)
@@ -101,10 +101,10 @@ return
 #       Tags         = ($version.Tags.Keys -join ';')
 #   }
 
-# Step 4 — export metadata (never values) to CSV for the rotation review.
-# TODO: real call — $inventory | Export-Csv -Path $OutputPath -NoTypeInformation
+# Step 4 - export metadata (never values) to CSV for the rotation review.
+# TODO: real call - $inventory | Export-Csv -Path $OutputPath -NoTypeInformation
 # Write-Output "Inventory written to $OutputPath ($($inventory.Count) rows)."
 
-# Step 5 — the report goes to the change ticket described in
+# Step 5 - the report goes to the change ticket described in
 # docs/pim-keyvault.md Part 2. The CSV stays out of source control
 # (see .gitignore).

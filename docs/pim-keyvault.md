@@ -1,17 +1,17 @@
-# Privileged Identity Management (PIM) + Key Vault — Runbook
+# Privileged Identity Management (PIM) + Key Vault: Runbook
 
 Procedural runbook for administering privileged access in Microsoft Entra ID
-and for rotating secrets in Azure Key Vault. Templates and procedures only —
+and for rotating secrets in Azure Key Vault. Templates and procedures only:
 nothing here executes against a real tenant or vault. Written for the admin
 who inherits this at 2 a.m. during an incident.
 
 ---
 
-## Part 1 — PIM: eligible vs. active assignments
+## Part 1: PIM eligible vs. active assignments
 
 **The core idea:** nobody *holds* admin rights day-to-day. Admins are
-*eligible* for a role and must **activate** it — with MFA, a ticket number,
-and a time limit — when they actually need it.
+*eligible* for a role and must **activate** it (with MFA, a ticket number,
+and a time limit) when they actually need it.
 
 | | Eligible assignment | Active assignment |
 |---|---|---|
@@ -31,13 +31,13 @@ Eligible = "can become admin"; active = "is admin right now".
 2. Clicks **Activate** on the eligible role → enters:
    - **Duration** (default 8 hours; cannot exceed the role's max setting)
    - **Justification** (free text: *what* you're doing and *why*)
-   - **Ticket number** (the change/incident ticket — mandatory for Global Admin)
+   - **Ticket number** (the change/incident ticket, mandatory for Global Admin)
 3. Entra prompts for **MFA** (or authentication strength per policy).
 4. If the role requires **approval**, the designated approver(s) get notified
    and must approve within the SLA (recommended: 30 minutes for production
    roles, 4 hours for dev). No approval = no activation = request expires.
-5. On expiry, the role is revoked automatically. The full chain — who, when,
-   why, ticket, approver — lands in the **PIM audit log** (retained 1 year).
+5. On expiry, the role is revoked automatically. The full chain (who, when,
+   why, ticket, approver) lands in the **PIM audit log** (retained 1 year).
 
 ### Approval workflow design (recommended)
 
@@ -46,8 +46,8 @@ Eligible = "can become admin"; active = "is admin right now".
 | Global Administrator | Approval + MFA + ticket | 2nd Global Admin (not the requester) | 8 hours | Yes |
 | Privileged Authentication Administrator | Approval + MFA + ticket | Global Admin | 8 hours | Yes |
 | Conditional Access Administrator | Approval + MFA | Global Admin or CA Admin | 8 hours | Yes |
-| User Administrator | MFA + ticket (no approval) | — (self-activate, audited) | 8 hours | Yes |
-| Helpdesk Administrator | MFA (no approval) | — (self-activate, audited) | 8 hours | Recommended |
+| User Administrator | MFA + ticket (no approval) |: (self-activate, audited) | 8 hours | Yes |
+| Helpdesk Administrator | MFA (no approval) |: (self-activate, audited) | 8 hours | Recommended |
 
 **Approver hygiene:** approvers must not be eligible for the *same* role
 they approve (separation of duties). Approvers get a weekly digest of the
@@ -60,10 +60,10 @@ need this access?"* PIM access reviews are configured per role:
 
 - **Privileged roles** (Global Admin, Privileged Auth Admin, CA Admin):
   **quarterly**, owner = the tenant's security lead. Auto-apply: **deny**
-  if the reviewer doesn't respond (fail-closed — access is the thing being
+  if the reviewer doesn't respond (fail-closed. Access is the thing being
   removed, so a non-response must remove it).
 - **Standard admin roles** (User Admin, Helpdesk, Billing): **semi-annual**.
-- **Guest users with any admin eligibility**: **monthly** — guests should
+- **Guest users with any admin eligibility**: **monthly**. Guests should
   almost never hold eligible admin roles; the review exists to catch it.
 - **Reviewers**: the role's current holders review each other, plus the
   security lead as fallback. Self-review is disabled where possible
@@ -72,7 +72,7 @@ need this access?"* PIM access reviews are configured per role:
 **What happens on a "deny":** the eligible assignment is removed immediately,
 the decision is logged to the audit log, and the ex-holder gets an email
 explaining the removal and how to re-request. Re-requests go through the
-approval workflow again — there is no "undo".
+approval workflow again: there is no "undo".
 
 ### Break-glass accounts (the exception to everything)
 
@@ -88,11 +88,11 @@ approval workflow again — there is no "undo".
 
 ---
 
-## Part 2 — Key Vault secret-rotation procedure
+## Part 2: Key Vault secret-rotation procedure
 
 **Scope:** application secrets, API keys, and certificates stored in Azure
 Key Vault. This is the *procedure*; the inventory template script lives at
-`scripts/Export-KeyVaultInventory.ps1` (template only — it does not touch a
+`scripts/Export-KeyVaultInventory.ps1` (template only: it does not touch a
 real vault).
 
 ### Rotation schedule
@@ -116,12 +116,12 @@ real vault).
    `expiryTime` + `notifyBeforeExpiry`.
 3. **Deploy consumers.** Roll the new version out to all consumers. Support a
    **dual-secret window** where both versions are valid (old version stays
-   enabled) — typically 24–72 hours for APIs, one deployment cycle for apps.
+   enabled): typically 24–72 hours for APIs, one deployment cycle for apps.
 4. **Verify.** Confirm every consumer authenticates with the new version:
    check application logs and the vault's secret-version usage. The old
    version's "last used" timestamp going quiet is your signal.
 5. **Disable the old version.** Disable (don't delete) the old secret version.
-   Wait one full monitoring cycle (24h) — if nothing breaks, the rotation is
+   Wait one full monitoring cycle (24h): if nothing breaks, the rotation is
    complete.
 6. **Purge only per policy.** Deleted versions stay in soft-delete for the
    vault's retention period (default 90 days). Purge earlier only with
@@ -131,7 +131,7 @@ real vault).
 
 - **Standard rotation** (service secrets, API keys, certs): the **application
   owner** approves the change ticket; the **platform/identity admin**
-  executes. Two people, always — the executor never approves their own rotation.
+  executes. Two people, always: the executor never approves their own rotation.
 - **Emergency rotation** (suspected compromise): the **security lead** can
   authorize verbally (incident bridge), followed by a retroactive ticket
   within 24 hours. Speed beats paperwork when a secret is burned.
@@ -144,11 +144,11 @@ Every rotation must leave these artifacts, in this order of authority:
 
 1. **Key Vault diagnostic logs** → Log Analytics: `SecretGet`, `SecretSet`,
    `SecretVersion` operations with caller identity and timestamp. This is the
-   source of truth — it cannot be edited from inside the tenant's normal
+   source of truth: it cannot be edited from inside the tenant's normal
    admin roles (diagnostic settings changes are themselves logged).
 2. **Change ticket** with approver, executor, dual-secret window dates, and
    the verification evidence (log excerpts, not the secret values).
-3. **Version metadata in the vault**: each version carries `tags` —
+3. **Version metadata in the vault**: each version carries `tags`,
    `rotated-by`, `ticket`, `rotation-date`. Secrets themselves never appear
    in tickets, chat, or email.
 4. **Quarterly attestation**: the security lead signs off that every secret
@@ -159,5 +159,5 @@ Every rotation must leave these artifacts, in this order of authority:
 
 A rotation is done when: the old version is disabled, all consumers are on
 the new version, the ticket is closed with evidence, and the next rotation
-date is on the calendar. If any of those is missing, it's not done — it's
+date is on the calendar. If any of those is missing, it's not done: it's
 "rotated, probably".

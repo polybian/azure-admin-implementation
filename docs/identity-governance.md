@@ -1,7 +1,7 @@
-# Identity Governance — Conditional Access Policy Design
+# Identity Governance: Conditional Access Policy Design
 
 **Scope:** template policy design for a Microsoft Entra ID (Azure AD) tenant.
-**Status:** Offline design — nothing here is deployed. The JSON below is a *design
+**Status:** Offline design, nothing here is deployed. The JSON below is a *design
 template* in Microsoft Graph `conditionalAccessPolicy` schema, ready to be
 reviewed and applied in **your own tenant's test environment** only.
 State is `disabled` in every template so a copy-paste can never go live by
@@ -15,14 +15,14 @@ Conditional Access is the policy engine that sits in front of every Entra ID
 authentication. Each sign-in is evaluated against a set of policies in a
 fixed evaluation order:
 
-1. **Signals** — who is signing in, what device, from where, which client app,
+1. **Signals**: who is signing in, what device, from where, which client app,
    what risk level the identity protection engines report.
-2. **Conditions** — each policy declares the signals it applies to: which
+2. **Conditions**: each policy declares the signals it applies to, such as which
    users (or directory roles), which target applications, which platforms,
    locations, and client app types.
-3. **Grant controls** — what must happen for access to be granted: require MFA,
+3. **Grant controls**: what must happen for access to be granted, such as require MFA,
    require a compliant device, require a specific auth strength, or **block**.
-4. **Session controls** — what happens *after* access is granted (app-enforced
+4. **Session controls**: what happens *after* access is granted (app-enforced
    restrictions, sign-in frequency, Conditional Access App Control).
 
 Key facts that drive the design below:
@@ -35,7 +35,7 @@ Key facts that drive the design below:
   privileged account, including ones created tomorrow.
 - **Break-glass accounts are always excluded.** Every block/grant policy that
   could lock you out must exclude at least two emergency-access accounts with
-  FIDO2 credentials stored in a safe. This is non-negotiable — a CA misconfig
+  FIDO2 credentials stored in a safe. This is non-negotiable: a CA misconfig
   that locks out the only Global Admins is a tenant-recovery incident.
 - **Report-only mode first.** Every policy goes through `state: report-only`
   for at least one business week (two is better). The sign-in log's
@@ -51,7 +51,7 @@ Key facts that drive the design below:
    Access is the wall. Assume passwords are compromised (phishing works) and
    design every policy as if the attacker already knows the credential.
 2. **Least privilege on the admin plane.** Admins get MFA *and* nothing else
-   extra — the same users see policy (b) and (c) too; admin accounts simply
+   extra: the same users see policy (b) and (c) too; admin accounts simply
    have the strictest combination.
 3. **Explicit exclusions, documented.** Excluded users/groups are listed with
    a `REPLACE_ME` placeholder and a reason comment so reviewers can audit them.
@@ -60,7 +60,7 @@ Key facts that drive the design below:
 
 ---
 
-## Template A — Require MFA for all administrators
+## Template A: Require MFA for all administrators
 
 **Intent:** any sign-in by a holder of a privileged directory role must
 satisfy MFA, regardless of device, location, or client app. This is the
@@ -70,17 +70,17 @@ the whole directory.
 **Included roles** are referenced by Entra's immutable role template IDs, so
 the policy survives role renames:
 
-- Global Administrator — `62e90394-69f5-4237-9190-012177145e10`
-- Privileged Authentication Administrator — `7be44c8a-adaf-4a4a-84bd-20c72776aec3`
-- Authentication Administrator — `c4e39bd9-1100-46d3-8c65-fb160da0071f`
-- User Administrator — `fe930be7-5e62-47db-91af-98c3a49a38b11`
-- Conditional Access Administrator — `b1be1c3e-b65d-4f19-8427-f6fa0d97feb9`
+- Global Administrator: `62e90394-69f5-4237-9190-012177145e10`
+- Privileged Authentication Administrator: `7be44c8a-adaf-4a4a-84bd-20c72776aec3`
+- Authentication Administrator: `c4e39bd9-1100-46d3-8c65-fb160da0071f`
+- User Administrator: `fe930be7-5e62-47db-91af-98c3a49a38b11`
+- Conditional Access Administrator: `b1be1c3e-b65d-4f19-8427-f6fa0d97feb9`
 
-> **TEMPLATE** — `state: disabled`, placeholders must be replaced.
+> **TEMPLATE**: `state: disabled`, placeholders must be replaced.
 
 ```json
 {
-  "displayName": "TEMPLATE — Require MFA for all administrators",
+  "displayName": "TEMPLATE - Require MFA for all administrators",
   "state": "disabled",
   "description": "TEMPLATE: require MFA on every sign-in by privileged admin role holders. Replace REPLACE_ME exclusions, test in report-only mode, then enable.",
   "conditions": {
@@ -125,22 +125,22 @@ leave `Connect-AzAccount` sessions unprotected.
 
 **Rollout note:** break-glass accounts are excluded because they use FIDO2
 hardware keys (phishing-resistant MFA) and are *monitored*, not MFA'd per
-policy — see `docs/pim-keyvault.md` for the break-glass procedure.
+policy, see `docs/pim-keyvault.md` for the break-glass procedure.
 
 ---
 
-## Template B — Block legacy authentication
+## Template B: Block legacy authentication
 
 **Intent:** legacy (basic) authentication protocols cannot do MFA, so they
 are the hole in every MFA policy. Block them tenant-wide. In Graph, legacy
-auth is selected with `clientAppTypes: ["exchangeActiveSync", "other"]` —
+auth is selected with `clientAppTypes: ["exchangeActiveSync", "other"]`:
 `other` covers IMAP, POP3, SMTP with basic auth and old Office clients.
 
-> **TEMPLATE** — `state: disabled`, placeholders must be replaced.
+> **TEMPLATE**: `state: disabled`, placeholders must be replaced.
 
 ```json
 {
-  "displayName": "TEMPLATE — Block legacy authentication",
+  "displayName": "TEMPLATE - Block legacy authentication",
   "state": "disabled",
   "description": "TEMPLATE: block all legacy/basic authentication (IMAP, POP, SMTP basic, old EAS). Replace REPLACE_ME exclusions, verify service accounts migrated, then enable.",
   "conditions": {
@@ -177,19 +177,19 @@ auth is selected with `clientAppTypes: ["exchangeActiveSync", "other"]` —
 
 **Before enabling, verify (in report-only):**
 
-1. Which users *actually* use legacy auth — the sign-in log filtered on
+1. Which users *actually* use legacy auth: the sign-in log filtered on
    "Legacy authentication clients" tells you. The usual suspects: scanners
    and multifunction printers sending via SMTP basic auth, old service
    accounts on IMAP, and a handful of users with Outlook 2013 or older.
 2. Migrate or exempt each one *explicitly*: service accounts move to OAuth
    SMTP (Exchange Online supports it) or get a time-boxed exclusion group
-   with an expiry review date — never a permanent open exemption.
+   with an expiry review date, never a permanent open exemption.
 3. Exchange Active Sync with modern auth is fine; this only blocks the
    basic-auth flavor of EAS.
 
 ---
 
-## Template C — Require compliant or hybrid-joined device for corporate apps
+## Template C: Require compliant or hybrid-joined device for corporate apps
 
 **Intent:** corporate applications (mail, SharePoint, the Azure portal) may
 only be reached from devices the organization manages: either Intune-
@@ -197,11 +197,11 @@ compliant (`device.isCompliant -eq True`) or Hybrid Azure AD joined
 (`device.trustType -eq "ServerAD"`). This implements device-based least
 privilege: managed device = known-good endpoint.
 
-> **TEMPLATE** — `state: disabled`, placeholders must be replaced.
+> **TEMPLATE**: `state: disabled`, placeholders must be replaced.
 
 ```json
 {
-  "displayName": "TEMPLATE — Require managed device for corporate apps",
+  "displayName": "TEMPLATE - Require managed device for corporate apps",
   "state": "disabled",
   "description": "TEMPLATE: require compliant OR hybrid-joined device for corporate apps. Replace REPLACE_ME app IDs/group, test in report-only mode, then enable.",
   "conditions": {
@@ -246,11 +246,11 @@ privilege: managed device = known-good endpoint.
 
 **Why the device *filter* plus grant controls:** the filter scopes the policy
 to the device states you manage; the grant controls are what actually deny an
-unmanaged device. Belt and suspenders is intentional — CA policies should be
+unmanaged device. Belt and suspenders is intentional: CA policies should be
 readable by the next admin who inherits them, and redundancy in conditions
 documents intent.
 
-**Interaction with policy A:** an admin on an unmanaged device hits both —
+**Interaction with policy A:** an admin on an unmanaged device hits both,
 MFA from A, device denial from C. The device denial wins (deny trumps grant).
 That is correct: privileged work from unmanaged endpoints is the exact
 scenario both policies exist to prevent. Admins who need emergency access
@@ -274,8 +274,8 @@ New-MgIdentityConditionalAccessPolicy -BodyParameter $policy
 # 4. then set state to "enabled".
 ```
 
-**Order of deployment:** B first (report-only — legacy auth is the
-reconnaissance hole), then A (admins — the highest-value targets), then C
-(device trust — the most disruptive to users, so it goes last and gets the
+**Order of deployment:** B first (report-only, legacy auth is the
+reconnaissance hole), then A (admins, the highest-value targets), then C
+(device trust, the most disruptive to users, so it goes last and gets the
 longest pilot). See `docs/pim-keyvault.md` for the privileged-access side
 of this design.

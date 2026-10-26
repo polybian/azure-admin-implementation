@@ -114,7 +114,7 @@ Write-Output ''
 
 Write-Output '--- Users WITHOUT MFA ---'
 if ($withoutMfa.Count -eq 0) {
-    Write-Output '(none — full coverage)'
+    Write-Output '(none - full coverage)'
 }
 else {
     $withoutMfa |
